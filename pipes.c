@@ -75,6 +75,7 @@ void children(char entrada[], int length, int inicio, int op, int fin, char sali
 
 while ((wpid = wait(&status)) > 0); // El padre espera que todos los procesos hijos terminen para poder generar el archivo final
     for (int progress=0; progress<2; progress++) {
+        close(pipes[(progress*2)+1]);
         int k = read(pipes[(progress*2)], placeholder, sizeof(placeholder)+1);
         strcat(final,placeholder);
     }
