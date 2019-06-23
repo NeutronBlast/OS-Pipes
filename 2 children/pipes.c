@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <sys/time.h>
+#include "encript.h"
+#include "decypher.h"
+#include "pipes.h"
+#include "manejoArchivos.h"
+
+void children(char entrada[], int length, int inicio, int op, int fin, char salida[]){
+    /*Inicio indica donde va a iniciar cada hijo al cifrar el texto*/
+    pid_t child_pid;
+    P pipes[2*2]; //2*numPipes
+    char placeholder[1000];
+    char text[1000];
+    char final[1000]="";
+    int status = 0;
+	int mult = 1; //Multiplicador
+	fin = (mult*(length/2))-1;
+
+//2*numPipes
+//2 pipes por proceso
+    for (int progress=0; progress<2*2; progress++){
+        if (pipe(pipes[progress].myPipe)<0){
+            perror("pipe");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    printf("Texto inicial es %s\n", entrada);
+
+    for (int progress=0; progress<2; progress++) {
+        if (progress > 0) fin = (mult*(length/2))-1;
+
+
+        if (progress+1 == 2){
+        /*La ultima division termina cuando se termine el texto en lugar de seguir la formula*/
+			fin = length;
+        }
+
+        child_pid = fork();
+
+        if (child_pid<0){
+            perror("Hubo error al hacer el fork\n");
+            exit(1);
+        }
+
+        else if (child_pid>0){
+            printf("Numero de caracteres %d\n", fin-inicio);
+            strncpy(placeholder,entrada+inicio,(fin-inicio)+1);
+            printf("Parte de texto es %s\n",placeholder);
+            close(pipes[progress*2].myPipe[0]);
+            write(pipes[progress*2].myPipe[1], placeholder, strlen(placeholder)+1);
+        }
+
+        else if (child_pid == 0) {
+        fin = (mult*(length/2))-1;
+
+        printf("child pid %d   parent pid %d\n",getpid(),getppid());fflush(stdout);
+        printf("Hijo comienza en %d , termina en %d , con multiplicador %d\n", inicio, fin ,mult);
+
+//Cierro pipe de escritura en el hijo
+        close(pipes[progress*2].myPipe[1]);
+        int k = read(pipes[progress*2].myPipe[0], text, 1000);
+        text[k] = 0;
+
+         if (op == 1){
+            desencriptarM(text,0,strlen(text));
+        }
+
+        else if (op == 2){
+            encriptar(text,0,strlen(text));
+        }
+    
+        printf("Parte de texto encriptada es %s\n",text);
+        close(pipes[(progress*2)+1].myPipe[0]);
+        write(pipes[(progress*2)+1].myPipe[1], text, strlen(text)+1);
+        exit(0);
+
+    }
+	inicio = fin+1;
+	mult++;
+    }
+
+waitpid(child_pid, &status, 0); //Espera a que el ultimo hijo termine
+
+     for (int progress=0; progress<2*2; progress++) {
+        close(pipes[(progress*2)+1].myPipe[1]);
+        int k = read(pipes[(progress*2)+1].myPipe[0], text, strlen(text)+1);
+        text[k] = 0;
+        strcat(final,text);
+    }
+
+
+    if (op == 1){
+        desencriptar(final,0,length);
+    }
+
+    else{
+        encriptarM(final,0,length);
+    }
+    
+    printf("Padre texto es %s\n",final);
+    replace(salida,final);
+}
