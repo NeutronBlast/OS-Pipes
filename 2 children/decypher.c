@@ -1,8 +1,7 @@
 #include <string.h>
 #include "decypher.h"
 
-void desencriptar(char message[], int inicio, int nc){
-	int fin = inicio+nc;
+void desencriptar(char message[], int inicio, int fin){
 	char ch;
 	
 	for(inicio=inicio; inicio<=fin; inicio++){
@@ -29,8 +28,7 @@ void desencriptar(char message[], int inicio, int nc){
 	}
 }
 
-void desencriptarM(char message[],int i, int nc){
-    int fin = i+nc;
+void desencriptarM(char message[],int i, int fin){
 	
 	for (i=i; i<=fin; i++){
 		switch(message[i]){

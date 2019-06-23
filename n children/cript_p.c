@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     int NumHijos;
 
     if (argc != 5){
-        printf("Falta un argumento\n");
+        printf("Mal uso de argumentos\n");
         printf("Ejemplo de uso correcto: ./cript_p -c/-d NumHijos ArchivoEntrada, ArchivoSalida\n");
         return 0;
     }
@@ -91,8 +91,8 @@ int main(int argc, char *argv[]) {
     else 
     length = strlen(vector);
 
-    printf("Texto luego de quitarle los espacios\n%s\n", vector);
-    printf("Longitud %d\n", length);
+    //printf("Texto luego de quitarle los espacios\n%s\n", vector);
+    //printf("Longitud %d\n", length);
 
     int verif = verify(NumHijos,length);
         if (verif == 0){

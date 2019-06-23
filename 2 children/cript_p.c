@@ -25,10 +25,9 @@ int main(int argc, char *argv[]) {
     gettimeofday(&begin,NULL);
     /*Tomar los argumentos de la linea de comando*/
     int op = 0;
-    //int NumHijos;
 
     if (argc != 4){
-        printf("Falta un argumento\n");
+        printf("Mal uso de argumentos\n");
         printf("Ejemplo de uso correcto: ./cript_p -c/-d NumHijos ArchivoEntrada, ArchivoSalida\n");
         return 0;
     }
@@ -37,19 +36,6 @@ int main(int argc, char *argv[]) {
     size_t len = strlen(argv[1]);
     char * operacion = malloc(len+2);
     strcpy(operacion, argv[1]);
-
-/*    char *en;
-    NumHijos = strtol(argv[2], &en,  10);
-        if (NumHijos == 0){
-            printf("Numero de hijos debe ser un numero entero positivo mayor a 0\n");
-            return 0;
-        }
-
-        else if (NumHijos<0){
-            printf("Numero de hijos debe ser un numero entero positivo mayor a 0\n");
-            return 0;
-        }
-        */ 
         
     len = strlen(argv[2]);
     /*Nombre archivo de entrada*/
@@ -91,16 +77,8 @@ int main(int argc, char *argv[]) {
     else 
     length = strlen(vector);
 
-    printf("Texto luego de quitarle los espacios\n%s\n", vector);
-    printf("Longitud %d\n", length);
-
-  /*   int verif = verify(NumHijos,length);
-        if (verif == 0){
-            printf("Numero de hijos ingresado es mayor a la longitud del texto\n");
-            return 0;
-        }
-*/
-    /*Reemplazar archivo de entrada con texto sin espacios*/
+    //printf("Texto luego de quitarle los espacios\n%s\n", vector);
+    //printf("Longitud %d\n", length);
 
     /*Crear arbol de procesos*/
     children(vector,length,0,op,0,file2);
