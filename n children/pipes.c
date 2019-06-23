@@ -20,6 +20,7 @@ void children(char entrada[], int hijos, int length, int inicio, int op, int fin
     char text[1000];
     char final[1000]="";
     int status = 0;
+    int blah = 0;
 	int mult = 1; //Multiplicador
 	fin = (mult*(length/hijos))-1;
 
@@ -88,7 +89,10 @@ void children(char entrada[], int hijos, int length, int inicio, int op, int fin
 	inicio = fin+1;
 	mult++;
     }
-while ((wpid = wait(&status)) > 0);
+while ((wpid = wait(&status)) > 0){
+blah++;
+//quitar el warning
+}
 //waitpid(child_pid, &status, 0); //Espera a que el ultimo hijo termine
      for (int progress=0; progress<hijos; progress++) {
         close(pipes[(progress*2)+1].myPipe[1]);
